@@ -30,11 +30,11 @@ public class Main {
         availableRoles.add(contributor);
 
         User user = new User(1, "Sarthak");
-        user.addRole(admin, "Admin");
+        user.addRole(admin, RoleName.ADMIN);
         User user2 = new User(2, "Sarthak2");
-        user2.addRole(manager, "Manager");
+        user2.addRole(manager, RoleName.MANAGER);
         User user3= new User(3, "Sarthak3");
-        user3.addRole(contributor, "Contributor");
+        user3.addRole(contributor, RoleName.CONTRIBUTOR);
 
         users.add(user);
         users.add(user2);
@@ -50,6 +50,8 @@ public class Main {
             System.out.println("1 : add a user");
             System.out.println("2 : view all users");
             System.out.println("3: Add Role to a user");
+            System.out.println("4: Go to Login");
+            System.out.println("5: Exit");
             int choice = sc.nextInt();
 
             switch (choice) {
@@ -89,13 +91,13 @@ public class Main {
                     if(current != null) {
                         System.out.println("Enter a role 1: Admin, 2: Manager, 3: Contributor");
                         int role = sc.nextInt();
-                        String roleName = "";
+                        RoleName roleName = null;
                         if (role == 1) {
-                            roleName = "Admin";
+                            roleName = RoleName.ADMIN;
                         } else if (role == 2) {
-                            roleName = "Manager";
+                            roleName = RoleName.MANAGER;
                         } else if (role == 3) {
-                            roleName = "Contributor";
+                            roleName = RoleName.CONTRIBUTOR;
                         } else {
                             System.out.println("Invalid Choice");
                             break;
@@ -135,15 +137,15 @@ public class Main {
         if(currentUser != null) {
                 if (currentUser.role != null) {
                     switch (currentUser.role.roleName) {
-                        case "Admin" -> {
+                        case RoleName.ADMIN -> {
                             System.out.println("Hello " + currentUser.name + " You are a " + currentUser.role.roleName);
                             adminFunction();
                         }
-                        case "Manager" -> {
+                        case RoleName.MANAGER -> {
                             System.out.println("Hello " + currentUser.name + " You are a Manager");
                             adminFunction();
                         }
-                        case "Contributor" -> {
+                        case RoleName.CONTRIBUTOR -> {
                             System.out.println("Hello " + currentUser.name + " You are a Contributor" );
                             adminFunction();
                         }

@@ -10,7 +10,7 @@ public class User {
         this.name= name;
     }
 
-    public void addRole(List<Permissions> p, String roleName) {
+    public void addRole(List<Permissions> p, RoleName roleName) {
         this.role = new Role(1, roleName, p);
     }
 }
