@@ -30,11 +30,11 @@ public class Main {
         availableRoles.add(contributor);
 
         User user = new User(1, "Sarthak");
-        user.addRole(admin, RoleName.ADMIN);
+        user.addRole(admin, "ADMIN");
         User user2 = new User(2, "Sarthak2");
-        user2.addRole(manager, RoleName.MANAGER);
+        user2.addRole(manager, "MANAGER");
         User user3= new User(3, "Sarthak3");
-        user3.addRole(contributor, RoleName.CONTRIBUTOR);
+        user3.addRole(contributor, "CONTRIBUTOR");
 
         users.add(user);
         users.add(user2);
@@ -49,9 +49,9 @@ public class Main {
             System.out.println("Enter a choice");
             System.out.println("1 : add a user");
             System.out.println("2 : view all users");
-            System.out.println("3: Add Role to a user");
-            System.out.println("4: Go to Login");
-            System.out.println("5: Exit");
+            System.out.println("3 : Add Role to a user");
+            System.out.println("4 : Go to Login");
+            System.out.println("5 : Exit");
             int choice = sc.nextInt();
 
             switch (choice) {
@@ -65,13 +65,16 @@ public class Main {
                     User user = new User(id, name);
                     users.add(user);
                     System.out.println("user created" + " " + user.name);
+
+                    createRole(user);
+
                     break;
 
                 case 2:
                     for (User u : users) {
                         System.out.println(u.name);
                         if (u.role != null) {
-                            System.out.println("Role: " + u.role.roleName);
+                            System.out.println("Role: " + u.role.name);
                         } else {
                             System.out.println("Role hasn't been assigned yet !");
                         }
@@ -91,20 +94,20 @@ public class Main {
                     if(current != null) {
                         System.out.println("Enter a role 1: Admin, 2: Manager, 3: Contributor");
                         int role = sc.nextInt();
-                        RoleName roleName = null;
+                        String roleName = null;
                         if (role == 1) {
-                            roleName = RoleName.ADMIN;
+                            roleName = "ADMIN";
                         } else if (role == 2) {
-                            roleName = RoleName.MANAGER;
+                            roleName = "MANAGER";
                         } else if (role == 3) {
-                            roleName = RoleName.CONTRIBUTOR;
+                            roleName = "CONTRIBUTOR";
                         } else {
                             System.out.println("Invalid Choice");
                             break;
                         }
 
                         current.addRole(availableRoles.get(role - 1), roleName);
-                        System.out.println("Role for User" + " " + current.id + " " + current.name + " has been updated to" + " " + current.role.roleName);
+                        System.out.println("Role for User" + " " + current.id + " " + current.name + " has been updated to" + " " + current.role.name);
                     } else {
                             System.out.println("Invalid User ID");
                     }
@@ -118,10 +121,91 @@ public class Main {
                 case 5:
                     System.out.println("Exited bye !");
                     return;
+
                 default:
                     System.out.println("Invalid Choice");
+
             }
         }
+    }
+
+    public static void createRole(User user) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("1 : Create new role, 2 : Add existing role");
+        int ch = sc.nextInt();
+
+        if (ch == 1) {
+            System.out.println("Enter the name for role");
+            sc.nextLine();
+            String name = sc.nextLine();
+
+            Permissions[] allPerms = Permissions.values();
+            System.out.println("Select permissions to add (by number):");
+
+            for (int i = 0; i < allPerms.length; i++) {
+                System.out.println((i + 1) + ". " + allPerms[i]);
+            }
+
+            System.out.println("Enter comma-separated numbers (e.g., 1,3,5):");
+            String input = sc.nextLine();
+
+            List<Permissions> perms = new ArrayList<>();
+
+            try {
+                String[] parts = input.split(",");
+                for (String part : parts) {
+                    int choice = Integer.parseInt(part.trim());
+                    if (choice >= 1 && choice <= allPerms.length) {
+                        perms.add(allPerms[choice - 1]); // index is (choice - 1)
+                    } else {
+                        System.out.println("Invalid choice: " + choice);
+                    }
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input format.");
+                return;
+            }
+
+            Role role = new Role(4, name, perms);
+            user.addRole(role);
+            System.out.println("Created role: " + role.name + " with permissions: " + perms);
+        } else if (ch == 2) {
+            System.out.println("Enter a role 1: Admin, 2: Manager, 3: Contributor");
+            int role = sc.nextInt();
+            String roleName = null;
+            if (role == 1) {
+                roleName = "ADMIN";
+            } else if (role == 2) {
+                roleName = "MANAGER";
+            } else if (role == 3) {
+                roleName = "CONTRIBUTOR";
+            } else {
+                System.out.println("Invalid Choice");
+            }
+            user.addRole(availableRoles.get(role - 1), roleName);
+        } else {
+            System.out.println("Invalid Choice");
+        }
+    }
+
+    public static void managerFunction(){
+        System.out.println("This is Manager functions");
+
+        Scanner sc = new Scanner(System.in);
+        System.out.println("1: Create Task");
+
+        User user = users.get(2);
+
+        TaskBuilder taskBuilder = new TaskBuilder();
+        TaskDirector taskDirector = new TaskDirector();
+
+        taskDirector.construct(taskBuilder, user);
+        Task task = taskBuilder.getTask();
+
+//        task.updateStatus(Status.COMPLETED);
+        task.display();
+
     }
 
     public static void login(){
@@ -136,16 +220,16 @@ public class Main {
         }
         if(currentUser != null) {
                 if (currentUser.role != null) {
-                    switch (currentUser.role.roleName) {
-                        case RoleName.ADMIN -> {
-                            System.out.println("Hello " + currentUser.name + " You are a " + currentUser.role.roleName);
+                    switch (currentUser.role.name) {
+                        case "ADMIN" -> {
+                            System.out.println("Hello " + currentUser.name + " You are a " + currentUser.role.name);
                             adminFunction();
                         }
-                        case RoleName.MANAGER -> {
+                        case "MANAGER" -> {
                             System.out.println("Hello " + currentUser.name + " You are a Manager");
-                            adminFunction();
+                            managerFunction();
                         }
-                        case RoleName.CONTRIBUTOR -> {
+                        case "CONTRIBUTOR" -> {
                             System.out.println("Hello " + currentUser.name + " You are a Contributor" );
                             adminFunction();
                         }
